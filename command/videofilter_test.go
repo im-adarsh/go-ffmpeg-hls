@@ -11,6 +11,21 @@ import (
 // -hls_segment_filename beach/360p_%03d.ts beach/360p.m3u8
 func TestHLSTranscoder_GetCommand(t *testing.T) {
 
+	vf := getVideoFilter()
+
+	got := vf.GetFilterCommand()
+	expected := "-vf scale=640:360 " +
+		"-c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 " +
+		"-g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod " +
+		"-b:v 800k -maxrate 856k -bufsize 1200k -b:a 96k"
+
+	if got != expected {
+		t.Errorf("expected : %s, got : %s", expected, got)
+	}
+
+}
+
+func getVideoFilter() *VideoFilterOptions {
 	vf := NewVideoFilterBuilder(640, 360).
 		AudioCodec("aac").
 		AudioSampleRate(48000).
@@ -25,15 +40,5 @@ func TestHLSTranscoder_GetCommand(t *testing.T) {
 		BufferSize(1200).
 		AudioBitrate(96).
 		Build()
-
-	got := vf.GetFilterCommand()
-	expected := "-vf scale=640:360 " +
-		"-c:a aac -ar 48000 -c:v h264 -profile:v main -crf 20 -sc_threshold 0 " +
-		"-g 48 -keyint_min 48 -hls_time 4 -hls_playlist_type vod " +
-		"-b:v 800k -maxrate 856k -bufsize 1200k -b:a 96k"
-
-	if got != expected {
-		t.Errorf("expected : %s, got : %s", expected, got)
-	}
-
+	return vf
 }
