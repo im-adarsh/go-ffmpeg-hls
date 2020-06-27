@@ -14,7 +14,7 @@ type VideoFilterOptions struct {
 	height          int
 	audioCodec      string
 	videoCodec      string
-	aspectRatio     int
+	audioSampleRate int // hertz
 	videoProfile    string
 	compression     int
 	threshold       int
@@ -61,9 +61,9 @@ func (b *VideoFilterBuilder) VideoCodec(videoCodec string) *VideoFilterBuilder {
 	return b
 }
 
-func (b *VideoFilterBuilder) AspectRatio(aspectRatio int) *VideoFilterBuilder {
-	b.videoFilter.aspectRatio = aspectRatio
-	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-ar %d", aspectRatio)
+func (b *VideoFilterBuilder) AudioSampleRate(audioSampleRate int) *VideoFilterBuilder {
+	b.videoFilter.audioSampleRate = audioSampleRate
+	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-ar %d", audioSampleRate)
 	return b
 }
 
