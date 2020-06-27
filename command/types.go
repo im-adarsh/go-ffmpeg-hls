@@ -1,6 +1,9 @@
 package command
 
-import "fmt"
+import (
+	"fmt"
+	"path/filepath"
+)
 
 var initCommand = "ffmpeg  -y"
 
@@ -53,19 +56,27 @@ func (b *HLSStreamBuilder) MasterFileName(masterFileName string) *HLSStreamBuild
 	return b
 }
 
+// -map 0:v -map 0:a -map 0:v -map 0:a -f hls -var_stream_map "v:0,a:0 v:1,a:1"
 func (b *HLSStreamBuilder) Build() (string, error) {
 
+	maps := ""
+	varStreamMaps := ""
+	videoFilters := ""
 	for _, v := range b.hLSStream.videoFilters {
-		filePrefix := fmt.Sprintf("%s/%d_%d_%d", b.hLSStream.outputDirectoryPath, v.width, v.height, v.videoBitrate)
-		segmentFileName := filePrefix + "_%03d.ts"
-		b.hLSStream.command = b.hLSStream.command + Separator + v.GetFilterCommand()
-		b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-hls_segment_filename %s", segmentFileName)
-		b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("%s.m3u8", filePrefix)
+		maps = maps + "-map 0" + Separator
+		varStreamMaps = varStreamMaps + fmt.Sprintf("v:%d,a:%d", v.filterIndex, v.filterIndex) + Separator
+		videoFilters = videoFilters + Separator + v.GetFilterCommand()
 	}
+	b.hLSStream.command = b.hLSStream.command + Separator + maps + videoFilters
+	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-var_stream_map \"%s\"", varStreamMaps)
+	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-master_pl_name %s", filepath.Join(b.hLSStream.outputDirectoryPath, b.hLSStream.masterFilename))
 
-	//b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-var_stream_map \"v:0,a:0 v:1,a:1\"")
-	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-hls_flags single_file")
-	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-master_pl_name %s/%s", b.hLSStream.outputDirectoryPath, b.hLSStream.masterFilename)
+	segmentPrefix := filepath.Join(b.hLSStream.outputDirectoryPath, "v%v/fileSequence%d.ts")
+	segmentMasterPrefix := filepath.Join(b.hLSStream.outputDirectoryPath, "v%v/prog_index.m3u8")
+	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-hls_segment_filename %s", fmt.Sprintf("\"%s\"", segmentPrefix))
+	b.hLSStream.command = b.hLSStream.command + Separator + segmentMasterPrefix
+
+	//b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-hls_flags single_file")
 
 	return b.hLSStream.command, nil
 }

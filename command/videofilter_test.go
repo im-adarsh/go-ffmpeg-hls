@@ -11,7 +11,7 @@ import (
 // -hls_segment_filename beach/360p_%03d.ts beach/360p.m3u8
 func TestHLSTranscoder_GetCommand(t *testing.T) {
 
-	vf := getVideoFilter(640, 360)
+	vf := getVideoFilter(640, 360, 0)
 
 	got := vf.GetFilterCommand()
 	expected := "-vf scale=640:360 " +
@@ -25,8 +25,8 @@ func TestHLSTranscoder_GetCommand(t *testing.T) {
 
 }
 
-func getVideoFilter(width, height int) VideoFilterOptions {
-	vf := NewVideoFilterBuilder(width, height).
+func getVideoFilter(width, height int, filterIndex int) VideoFilterOptions {
+	vf := NewVideoFilterBuilder(width, height, filterIndex).
 		AudioCodec("aac").
 		AudioSampleRate(48000).
 		VideoCodec("h264").

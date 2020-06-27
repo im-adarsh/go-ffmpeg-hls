@@ -9,6 +9,7 @@ import "fmt"
 // -hls_segment_filename beach/360p_%03d.ts beach/360p.m3u8
 
 type VideoFilterOptions struct {
+	filterIndex     int
 	command         string
 	width           int
 	height          int
@@ -31,15 +32,16 @@ type VideoFilterBuilder struct {
 	videoFilter *VideoFilterOptions
 }
 
-func NewVideoFilterBuilder(width, height int) *VideoFilterBuilder {
+func NewVideoFilterBuilder(width, height int, filterIndex int) *VideoFilterBuilder {
 	videoFilter := &VideoFilterOptions{}
 	videoFilter.command = ""
 	videoFilter.width = width
 	videoFilter.height = height
+	videoFilter.filterIndex = filterIndex
 	if width > 0 && height > 0 {
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:%d", width, height)
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-s:v:%d %dx%d", filterIndex, width, height)
 	} else {
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=\"%d:%s\"", width, "trunc(ow/a/2)*2")
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-s:v:%d \"%dx%s\"", filterIndex, width, "trunc(ow/a/2)*2")
 	}
 	b := &VideoFilterBuilder{videoFilter: videoFilter}
 	return b
@@ -47,13 +49,13 @@ func NewVideoFilterBuilder(width, height int) *VideoFilterBuilder {
 
 func (b *VideoFilterBuilder) AudioCodec(audioCodec string) *VideoFilterBuilder {
 	b.videoFilter.audioCodec = audioCodec
-	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-c:a %s", audioCodec)
+	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-c:a:%d %s", b.videoFilter.filterIndex, audioCodec)
 	return b
 }
 
 func (b *VideoFilterBuilder) VideoCodec(videoCodec string) *VideoFilterBuilder {
 	b.videoFilter.videoCodec = videoCodec
-	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-c:v %s", videoCodec)
+	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-c:v:%d %s", b.videoFilter.filterIndex, videoCodec)
 	return b
 }
 
@@ -95,7 +97,7 @@ func (b *VideoFilterBuilder) HlsPlaylistType(hlsPlaylistType string) *VideoFilte
 
 func (b *VideoFilterBuilder) VideoBitrate(videoBitrate int) *VideoFilterBuilder {
 	b.videoFilter.videoBitrate = videoBitrate
-	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-b:v %dk", videoBitrate)
+	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-b:v:%d %dk", b.videoFilter.filterIndex, videoBitrate)
 	return b
 }
 
@@ -113,7 +115,7 @@ func (b *VideoFilterBuilder) BufferSize(bufferSize int) *VideoFilterBuilder {
 
 func (b *VideoFilterBuilder) AudioBitrate(audioBitrate int) *VideoFilterBuilder {
 	b.videoFilter.audioBitrate = audioBitrate
-	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-b:a %dk", audioBitrate)
+	b.videoFilter.command = b.videoFilter.command + Separator + fmt.Sprintf("-b:a:%d %dk", b.videoFilter.filterIndex, audioBitrate)
 	return b
 }
 
