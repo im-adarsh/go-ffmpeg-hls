@@ -10,7 +10,7 @@ func TestHLSTranscoder_Build(t *testing.T) {
 
 	vf2 := getVideoFilter(100, -1)
 	vf1 := getVideoFilter(640, 360)
-	cmd, err := NewHLSStreamBuilder("input.mp4", ".").
+	cmd, err := NewHLSStreamBuilder("input.mov", ".").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
