@@ -63,5 +63,8 @@ func (b *HLSStreamBuilder) Build() (string, error) {
 		b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("%s.m3u8", filePrefix)
 	}
 
-	return b.hLSStream.command + Separator + fmt.Sprintf("-master_pl_name %s", b.hLSStream.masterFilename), nil
+	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-var_stream_map \"v:0,a:0 v:1,a:1\"")
+	b.hLSStream.command = b.hLSStream.command + Separator + fmt.Sprintf("-master_pl_name %s/%s", b.hLSStream.outputDirectoryPath, b.hLSStream.masterFilename)
+
+	return b.hLSStream.command, nil
 }
