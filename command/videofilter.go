@@ -39,9 +39,9 @@ func NewVideoFilterBuilder(width, height int, filterIndex int) *VideoFilterBuild
 	videoFilter.height = height
 	videoFilter.filterIndex = filterIndex
 	if width > 0 && height > 0 {
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-s:v:%d %dx%d", filterIndex, width, height)
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:%d", width, height)
 	} else {
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-s:v:%d \"%dx%s\"", filterIndex, width, "trunc(ow/a/2)*2")
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=\"%d:%s\"", width, "trunc(ow/a/2)*2")
 	}
 	b := &VideoFilterBuilder{videoFilter: videoFilter}
 	return b
