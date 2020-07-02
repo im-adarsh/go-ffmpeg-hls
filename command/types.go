@@ -2,6 +2,8 @@ package command
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 )
 
 var initCommand = "ffmpeg  -y"
@@ -65,4 +67,31 @@ func (b *HLSStreamBuilder) Build() (string, error) {
 	}
 	b.hLSStream.command = b.hLSStream.command + Separator + videoFilters
 	return b.hLSStream.command, nil
+}
+
+func (b *HLSStreamBuilder) GenerateMasterPlaylist() error {
+
+	lines := []string{"#EXTM3U", "#EXT-X-VERSION:3"}
+	f, err := os.Create(filepath.Join(b.hLSStream.outputDirectoryPath, "/master.m3u8"))
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	for _, v := range b.hLSStream.videoFilters {
+		meta := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d", v.videoBitrate*1000, v.width, v.height)
+		dimension := fmt.Sprintf("%d_%d_%d", v.width, v.height, v.videoBitrate)
+		segmentMaster := fmt.Sprintf("%s/%s.m3u8", b.hLSStream.outputDirectoryPath, dimension)
+		lines = append(lines, meta, segmentMaster)
+	}
+	for _, v := range lines {
+		_, err = fmt.Fprintln(f, v)
+		if err != nil {
+			return err
+		}
+	}
+	err = f.Close()
+	if err != nil {
+		return err
+	}
+	return nil
 }
