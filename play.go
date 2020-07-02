@@ -11,7 +11,7 @@ func main() {
 
 	vf2 := getVideoFilter(100, 100, 0)
 	vf1 := getVideoFilter(640, 360, 1)
-	builder := command.NewHLSStreamBuilder("input.mov", "./output").
+	builder := command.NewHLSStreamBuilder("sample_input/input.mov", "./output").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
