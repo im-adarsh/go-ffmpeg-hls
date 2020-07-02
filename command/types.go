@@ -80,7 +80,7 @@ func (b *HLSStreamBuilder) GenerateMasterPlaylist() error {
 	for _, v := range b.hLSStream.videoFilters {
 		meta := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d", v.videoBitrate*1000, v.width, v.height)
 		dimension := fmt.Sprintf("%d_%d_%d", v.width, v.height, v.videoBitrate)
-		segmentMaster := fmt.Sprintf("%s/%s.m3u8", b.hLSStream.outputDirectoryPath, dimension)
+		segmentMaster := fmt.Sprintf("%s.m3u8", dimension)
 		lines = append(lines, meta, segmentMaster)
 	}
 	for _, v := range lines {
