@@ -19,16 +19,22 @@ func main() {
 	cmd, err := builder.Build()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	tran := new(hls.HLSTranscoder)
-	tran.NewHlsTranscoder(cmd)
+	err = tran.NewHlsTranscoder(cmd)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	done := tran.Run(false)
 
 	// This channel is used to wait for the process to end
 	err = <-done
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	builder.GenerateMasterPlaylist()
