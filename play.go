@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os/exec"
 
@@ -22,12 +23,17 @@ func main() {
 		return
 	}
 
-	cmd := exec.Command("bash", "-c", cmdFfmpeg)
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
+	cmd := exec.Command("ffmpeg", "-c", cmdFfmpeg)
+	stderr, _ := cmd.StderrPipe()
+	cmd.Start()
+
+	scanner := bufio.NewScanner(stderr)
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		m := scanner.Text()
+		fmt.Println(m)
 	}
+	cmd.Wait()
 
 	builder.GenerateMasterPlaylist()
 
