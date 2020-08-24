@@ -18,7 +18,7 @@ type HLSTranscoder struct {
 }
 
 func (t *HLSTranscoder) NewHlsTranscoder(command string) error {
-	var err error
+    var err error
 
 	if command == "" {
 		return errors.New("error on transcoder.Initialize: command missing")
@@ -32,8 +32,8 @@ func (t *HLSTranscoder) NewHlsTranscoder(command string) error {
 			return err
 		}
 	}
-	t.configuration = cfg
 
+	t.configuration = cfg
 	return nil
 }
 
