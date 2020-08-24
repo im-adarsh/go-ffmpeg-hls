@@ -1,17 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 
-	"github.com/im-adarsh/go-ffmpeg-hls/command"
+	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 )
 
 func main() {
 
 	vf2 := getVideoFilter(100, -1, 0)
 	vf1 := getVideoFilter(640, -1, 1)
-	builder := command.NewHLSStreamBuilder("sample_input/input.mov", "./output").
+	builder := hlsbuilder.NewHLSStreamBuilder("sample_input/input.mov", "./output").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
@@ -23,23 +25,22 @@ func main() {
 	}
 
 	cmd := exec.Command("bash", "-c", cmdFfmpeg)
+	cmdOutput := &bytes.Buffer{}
+	cmd.Stdout = cmdOutput
 	err = cmd.Run()
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		os.Stderr.WriteString(err.Error())
+		return
 	}
-
-	//if hlsTranscoder(err, cmd) {
-	//	return
-	//}
-
+	fmt.Print(string(cmdOutput.Bytes()))
+	cmd.Wait()
 
 	builder.GenerateMasterPlaylist()
 
 }
 
-func getVideoFilter(width, height int, filterIndex int) command.VideoFilterOptions {
-	vf := command.NewVideoFilterBuilder(width, height, filterIndex).
+func getVideoFilter(width, height int, filterIndex int) hlsbuilder.VideoFilterOptions {
+	vf := hlsbuilder.NewVideoFilterBuilder(width, height, filterIndex).
 		AudioCodec("aac").
 		AudioSampleRate(48000).
 		VideoCodec("h264").
