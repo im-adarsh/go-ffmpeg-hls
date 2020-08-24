@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,7 +13,8 @@ func main() {
 
 	vf2 := getVideoFilter(100, -1, 0)
 	vf1 := getVideoFilter(640, -1, 1)
-	builder := hlsbuilder.NewHLSStreamBuilder("sample_input/input.mov", "./output").
+	builder := hlsbuilder.
+		NewHLSStreamBuilder("sample_input/input.mov", "./output").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
@@ -25,15 +26,31 @@ func main() {
 	}
 
 	cmd := exec.Command("bash", "-c", cmdFfmpeg)
-	cmdOutput := &bytes.Buffer{}
-	cmd.Stdout = cmdOutput
-	err = cmd.Run()
+	// create a pipe for the output of the script
+	cmdReader, err := cmd.StderrPipe()
 	if err != nil {
-		os.Stderr.WriteString(err.Error())
+		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
 		return
 	}
-	fmt.Print(string(cmdOutput.Bytes()))
-	cmd.Wait()
+
+	scanner := bufio.NewScanner(cmdReader)
+	go func() {
+		for scanner.Scan() {
+			fmt.Printf("\t > %s\n", scanner.Text())
+		}
+	}()
+
+	err = cmd.Start()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
+		return
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
+		return
+	}
 
 	builder.GenerateMasterPlaylist()
 
