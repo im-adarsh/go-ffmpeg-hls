@@ -1,8 +1,9 @@
 package main
 
 import (
-	"bufio"
+	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
@@ -23,16 +24,15 @@ func main() {
 		return
 	}
 
-	cmd := exec.Command("ffmpeg", "-c", cmdFfmpeg)
-	stderr, _ := cmd.StderrPipe()
-	cmd.Start()
-
-	scanner := bufio.NewScanner(stderr)
-	scanner.Split(bufio.ScanWords)
-	for scanner.Scan() {
-		m := scanner.Text()
-		fmt.Println(m)
+	cmd := exec.Command("bash", "-c", cmdFfmpeg)
+	cmdOutput := &bytes.Buffer{}
+	cmd.Stdout = cmdOutput
+	err = cmd.Run()
+	if err != nil {
+		os.Stderr.WriteString(err.Error())
+		return
 	}
+	fmt.Print(string(cmdOutput.Bytes()))
 	cmd.Wait()
 
 	builder.GenerateMasterPlaylist()
