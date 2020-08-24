@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/im-adarsh/go-ffmpeg-hls/command"
 	"github.com/im-adarsh/go-ffmpeg-hls/hls"
@@ -16,17 +17,33 @@ func main() {
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
 		MasterFileName("master.m3u8")
-	cmd, err := builder.Build()
+	cmdFfmpeg, err := builder.Build()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
+	cmd := exec.Command("bash", "-c", cmdFfmpeg)
+	err = cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	//if hlsTranscoder(err, cmd) {
+	//	return
+	//}
+
+	builder.GenerateMasterPlaylist()
+
+}
+
+func hlsTranscoder(err error, cmd string) bool {
 	tran := new(hls.HLSTranscoder)
 	err = tran.NewHlsTranscoder(cmd)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return true
 	}
 	done := tran.Run(true)
 
@@ -34,11 +51,9 @@ func main() {
 	err = <-done
 	if err != nil {
 		fmt.Println(err)
-		return
+		return true
 	}
-
-	builder.GenerateMasterPlaylist()
-
+	return false
 }
 
 func getVideoFilter(width, height int, filterIndex int) command.VideoFilterOptions {
