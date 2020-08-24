@@ -5,7 +5,6 @@ import (
 	"os/exec"
 
 	"github.com/im-adarsh/go-ffmpeg-hls/command"
-	"github.com/im-adarsh/go-ffmpeg-hls/hls"
 )
 
 func main() {
@@ -37,24 +36,6 @@ func main() {
 
 	builder.GenerateMasterPlaylist()
 
-}
-
-func hlsTranscoder(err error, cmd string) bool {
-	tran := new(hls.HLSTranscoder)
-	err = tran.NewHlsTranscoder(cmd)
-	if err != nil {
-		fmt.Println(err)
-		return true
-	}
-	done := tran.Run(true)
-
-	// This channel is used to wait for the process to end
-	err = <-done
-	if err != nil {
-		fmt.Println(err)
-		return true
-	}
-	return false
 }
 
 func getVideoFilter(width, height int, filterIndex int) command.VideoFilterOptions {
