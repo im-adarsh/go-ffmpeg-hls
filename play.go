@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/im-adarsh/go-ffmpeg-hls/command"
+	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 )
 
 func main() {
 
 	vf2 := getVideoFilter(100, -1, 0)
 	vf1 := getVideoFilter(640, -1, 1)
-	builder := command.NewHLSStreamBuilder("sample_input/input.mov", "./output").
+	builder := hlsbuilder.NewHLSStreamBuilder("sample_input/input.mov", "./output").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
@@ -33,8 +33,8 @@ func main() {
 
 }
 
-func getVideoFilter(width, height int, filterIndex int) command.VideoFilterOptions {
-	vf := command.NewVideoFilterBuilder(width, height, filterIndex).
+func getVideoFilter(width, height int, filterIndex int) hlsbuilder.VideoFilterOptions {
+	vf := hlsbuilder.NewVideoFilterBuilder(width, height, filterIndex).
 		AudioCodec("aac").
 		AudioSampleRate(48000).
 		VideoCodec("h264").
