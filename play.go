@@ -29,11 +29,6 @@ func main() {
 		panic(err)
 	}
 
-	//if hlsTranscoder(err, cmd) {
-	//	return
-	//}
-
-
 	builder.GenerateMasterPlaylist()
 
 }
