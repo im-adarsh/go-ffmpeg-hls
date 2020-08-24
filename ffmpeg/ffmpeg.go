@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"./utils"
+	"github.com/im-adarsh/go-ffmpeg-hls/ffmpeg/utils"
 )
 
 // Configuration ...

@@ -6,7 +6,7 @@ import (
 	"io"
 	"os/exec"
 
-	"../ffmpeg"
+	"github.com/im-adarsh/go-ffmpeg-hls/ffmpeg"
 )
 
 type HLSTranscoder struct {

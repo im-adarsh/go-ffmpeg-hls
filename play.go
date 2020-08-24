@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"./command"
-	"./hls"
+	"github.com/im-adarsh/go-ffmpeg-hls/command"
+	"github.com/im-adarsh/go-ffmpeg-hls/hls"
 )
 
 func main() {
