@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/im-adarsh/go-ffmpeg-hls/ffmpeg"
 	"io"
 	"os/exec"
-
-	"github.com/im-adarsh/go-ffmpeg-hls/ffmpeg"
 )
 
 type HLSTranscoder struct {
