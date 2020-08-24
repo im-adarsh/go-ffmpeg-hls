@@ -28,7 +28,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	done := tran.Run(false)
+	done := tran.Run(true)
 
 	// This channel is used to wait for the process to end
 	err = <-done

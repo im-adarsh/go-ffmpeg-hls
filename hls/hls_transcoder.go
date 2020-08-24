@@ -2,6 +2,7 @@ package hls
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
@@ -18,12 +19,22 @@ type HLSTranscoder struct {
 }
 
 func (t *HLSTranscoder) NewHlsTranscoder(command string) error {
+	var err error
+
+	if command == "" {
+		return errors.New("error on transcoder.Initialize: command missing")
+	}
 	t.command = command
-	cfg, err := ffmpeg.Configure()
-	if err != nil {
-		return err
+
+	cfg := t.configuration
+	if len(cfg.FfmpegBin) == 0 || len(cfg.FfprobeBin) == 0 {
+		cfg, err = ffmpeg.Configure()
+		if err != nil {
+			return err
+		}
 	}
 	t.configuration = cfg
+
 	return nil
 }
 
