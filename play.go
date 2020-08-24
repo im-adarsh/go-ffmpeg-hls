@@ -9,8 +9,8 @@ import (
 
 func main() {
 
-	vf2 := getVideoFilter(100, 100, 0)
-	vf1 := getVideoFilter(640, 360, 1)
+	vf2 := getVideoFilter(100, -1, 0)
+	vf1 := getVideoFilter(640, -1, 1)
 	builder := command.NewHLSStreamBuilder("sample_input/input.mov", "./output").
 		HideBanner(true).
 		AppendVideoFilter(vf1).
