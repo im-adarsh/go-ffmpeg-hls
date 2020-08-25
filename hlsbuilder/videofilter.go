@@ -42,7 +42,8 @@ func NewVideoFilterBuilder(width, height int, filterIndex int) *VideoFilterBuild
 		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:%d", width, height)
 	} else {
 		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=\"%d:%s\"", width, "trunc(ow/a/2)*2")
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:-1", width)
+		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:-1", width)
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=w=%d:h=-1:force_original_aspect_ratio=decrease", width)
 	}
 	b := &VideoFilterBuilder{videoFilter: videoFilter}
 	return b
