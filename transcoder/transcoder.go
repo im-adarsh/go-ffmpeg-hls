@@ -13,10 +13,11 @@ import (
 )
 
 type hlsTranscoder struct {
-	inputFile      string
-	outputDir      string
-	masterFileName string
-	videoFilters   []hlsbuilder.VideoFilterOptions
+	inputFile            string
+	outputDir            string
+	masterFileName       string
+	masterFileVideoCodec string
+	videoFilters         []hlsbuilder.VideoFilterOptions
 }
 
 // hlsTranscoder builder pattern code
@@ -40,6 +41,11 @@ func (b *hlsTranscoderBuilder) MasterFileName(masterFileName string) *hlsTransco
 	return b
 }
 
+func (b *hlsTranscoderBuilder) MasterFileVideoCodec(masterFileVideoCodec string) *hlsTranscoderBuilder {
+	b.hlsTranscoder.masterFileVideoCodec = masterFileVideoCodec
+	return b
+}
+
 func (b *hlsTranscoderBuilder) InputFile(inputFile string) *hlsTranscoderBuilder {
 	b.hlsTranscoder.inputFile = inputFile
 	return b
@@ -55,7 +61,8 @@ func (b *hlsTranscoderBuilder) Run() (*hlsTranscoder, error) {
 	builder := hlsbuilder.
 		NewHLSStreamBuilder(b.hlsTranscoder.inputFile, b.hlsTranscoder.outputDir).
 		HideBanner(true).
-		MasterFileName("master.m3u8")
+		MasterFileName("master.m3u8").
+		MasterFileVideoCodec(b.hlsTranscoder.masterFileVideoCodec)
 
 	if b.hlsTranscoder.masterFileName != "" {
 		builder.MasterFileName(b.hlsTranscoder.masterFileName)

@@ -57,6 +57,7 @@ func (b *HLSStreamBuilder) MasterFileName(masterFileName string) *HLSStreamBuild
 	b.hLSStream.masterFilename = masterFileName
 	return b
 }
+
 func (b *HLSStreamBuilder) MasterFileVideoCodec(masterFileVideoCodec string) *HLSStreamBuilder {
 	b.hLSStream.masterFileVideoCodec = masterFileVideoCodec
 	return b
