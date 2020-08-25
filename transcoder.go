@@ -9,10 +9,10 @@ import (
 )
 
 type hlsTranscoder struct {
-	inputFile string
-	outputDir string
+	inputFile      string
+	outputDir      string
 	masterFileName string
-	videoFilters []hlsbuilder.VideoFilterOptions
+	videoFilters   []hlsbuilder.VideoFilterOptions
 }
 
 // hlsTranscoder builder pattern code
@@ -65,7 +65,7 @@ func (b *hlsTranscoderBuilder) Run() (*hlsTranscoder, error) {
 	// create a pipe for the output of the script
 	cmdReader, err := cmd.StderrPipe()
 	if err != nil {
-		return nil, errors.Wrap(FailedInitializeStdPipe,"")
+		return nil, errors.Wrap(FailedInitializeStdPipe, "")
 	}
 
 	scanner := bufio.NewScanner(cmdReader)
@@ -92,4 +92,3 @@ func (b *hlsTranscoderBuilder) Run() (*hlsTranscoder, error) {
 
 	return b.hlsTranscoder, nil
 }
-
