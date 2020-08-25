@@ -15,6 +15,7 @@ func main() {
 		InputFile("sample_input/input.mov").
 		OutputDir("./output").
 		VideoFiltersOptions([]hlsbuilder.VideoFilterOptions{vf1, vf2}).
+		MasterFileName("master99.m3u8").
 		Run()
 	if err != nil {
 		fmt.Println(err, "")

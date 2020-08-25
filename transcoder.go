@@ -3,9 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os/exec"
+
 	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 	"github.com/pkg/errors"
-	"os/exec"
 )
 
 type hlsTranscoder struct {
@@ -28,6 +29,11 @@ func NewHlsTranscoderBuilder() *hlsTranscoderBuilder {
 
 func (b *hlsTranscoderBuilder) VideoFiltersOptions(videoFilters []hlsbuilder.VideoFilterOptions) *hlsTranscoderBuilder {
 	b.hlsTranscoder.videoFilters = videoFilters
+	return b
+}
+
+func (b *hlsTranscoderBuilder) MasterFileName(masterFileName string) *hlsTranscoderBuilder {
+	b.hlsTranscoder.masterFileName = masterFileName
 	return b
 }
 
