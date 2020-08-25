@@ -15,6 +15,7 @@ func TestHLSTranscoder_Build(t *testing.T) {
 		AppendVideoFilter(vf1).
 		AppendVideoFilter(vf2).
 		MasterFileName("master.m3u8").
+		MasterFileVideoCodec("avc1.64001e,mp4a.40.2").
 		Build()
 	if err != nil {
 		t.Error()

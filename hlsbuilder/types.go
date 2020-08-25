@@ -11,12 +11,13 @@ var initCommand = "ffmpeg  -y"
 const Separator = " "
 
 type hlsStream struct {
-	command             string
-	hideBanner          bool
-	inputFilePath       string
-	outputDirectoryPath string
-	masterFilename      string
-	videoFilters        []VideoFilterOptions
+	command              string
+	hideBanner           bool
+	inputFilePath        string
+	outputDirectoryPath  string
+	masterFilename       string
+	masterFileVideoCodec string // TODO detect this
+	videoFilters         []VideoFilterOptions
 }
 
 // hlsStream builder pattern code
@@ -56,6 +57,10 @@ func (b *HLSStreamBuilder) MasterFileName(masterFileName string) *HLSStreamBuild
 	b.hLSStream.masterFilename = masterFileName
 	return b
 }
+func (b *HLSStreamBuilder) MasterFileVideoCodec(masterFileVideoCodec string) *HLSStreamBuilder {
+	b.hLSStream.masterFileVideoCodec = masterFileVideoCodec
+	return b
+}
 
 func (b *HLSStreamBuilder) Build() (string, error) {
 	videoFilters := ""
@@ -78,7 +83,7 @@ func (b *HLSStreamBuilder) GenerateMasterPlaylist() error {
 		return err
 	}
 	for _, v := range b.hLSStream.videoFilters {
-		meta := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d", v.videoBitrate*1000, v.width, v.height)
+		meta := fmt.Sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%d,RESOLUTION=%dx%d,CODECS=\"%+v\"", v.videoBitrate*1000, v.width, v.height, b.hLSStream.masterFileVideoCodec)
 		dimension := fmt.Sprintf("%d_%d_%d", v.width, v.height, v.videoBitrate)
 		segmentMaster := fmt.Sprintf("%s.m3u8", dimension)
 		lines = append(lines, meta, segmentMaster)
