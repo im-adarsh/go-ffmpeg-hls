@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/im-adarsh/go-ffmpeg-hls/transcoder"
+
 	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 )
 
@@ -11,7 +13,7 @@ func main() {
 	vf2 := getVideoFilter(100, -1, 0)
 	vf1 := getVideoFilter(640, -1, 1)
 
-	t, err := NewHlsTranscoderBuilder().
+	t, err := transcoder.NewHlsTranscoderBuilder().
 		InputFile("sample_input/input.mov").
 		OutputDir("./output").
 		VideoFiltersOptions([]hlsbuilder.VideoFilterOptions{vf1, vf2}).
