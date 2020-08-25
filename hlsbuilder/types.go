@@ -72,7 +72,7 @@ func (b *HLSStreamBuilder) Build() (string, error) {
 func (b *HLSStreamBuilder) GenerateMasterPlaylist() error {
 
 	lines := []string{"#EXTM3U", "#EXT-X-VERSION:3"}
-	f, err := os.Create(filepath.Join(b.hLSStream.outputDirectoryPath, "/master.m3u8"))
+	f, err := os.Create(filepath.Join(b.hLSStream.outputDirectoryPath, b.hLSStream.masterFilename))
 	if err != nil {
 		fmt.Println(err)
 		return err

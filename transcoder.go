@@ -54,7 +54,7 @@ func (b *hlsTranscoderBuilder) Run() (*hlsTranscoder, error) {
 		HideBanner(true).
 		MasterFileName("master.m3u8")
 
-	if b.hlsTranscoder.masterFileName == "" {
+	if b.hlsTranscoder.masterFileName != "" {
 		builder.MasterFileName(b.hlsTranscoder.masterFileName)
 	}
 
