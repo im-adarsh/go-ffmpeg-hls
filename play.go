@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"os/exec"
 
 	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 )
@@ -13,47 +10,17 @@ func main() {
 
 	vf2 := getVideoFilter(100, -1, 0)
 	vf1 := getVideoFilter(640, -1, 1)
-	builder := hlsbuilder.
-		NewHLSStreamBuilder("sample_input/input.mov", "./output").
-		HideBanner(true).
-		AppendVideoFilter(vf1).
-		AppendVideoFilter(vf2).
-		MasterFileName("master.m3u8")
-	cmdFfmpeg, err := builder.Build()
+
+	t, err := NewHlsTranscoderBuilder().
+		InputFile("sample_input/input.mov").
+		OutputDir("./output").
+		VideoFiltersOptions([]hlsbuilder.VideoFilterOptions{vf1, vf2}).
+		Run()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err, "")
 		return
 	}
-
-	cmd := exec.Command("bash", "-c", cmdFfmpeg)
-	// create a pipe for the output of the script
-	cmdReader, err := cmd.StderrPipe()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
-		return
-	}
-
-	scanner := bufio.NewScanner(cmdReader)
-	go func() {
-		for scanner.Scan() {
-			fmt.Printf("\t > %s\n", scanner.Text())
-		}
-	}()
-
-	err = cmd.Start()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
-		return
-	}
-
-	err = cmd.Wait()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
-		return
-	}
-
-	builder.GenerateMasterPlaylist()
-
+	_ = t
 }
 
 func getVideoFilter(width, height int, filterIndex int) hlsbuilder.VideoFilterOptions {
