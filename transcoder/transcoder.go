@@ -4,9 +4,8 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"os/exec"
-
-	"github.com/carousell/Orion/utils/log"
 
 	"github.com/im-adarsh/go-ffmpeg-hls/hlsbuilder"
 	"github.com/pkg/errors"
@@ -76,7 +75,7 @@ func (b *hlsTranscoderBuilder) Run() (*hlsTranscoder, error) {
 	if err != nil {
 		return nil, errors.Wrap(FailedToGenerateCommand, "unable to prepare command")
 	}
-	log.Info(context.Background(), "ffmpeg", cmdFfmpeg, "input_file", b.hlsTranscoder.inputFile)
+	log.Println(context.Background(), "ffmpeg", cmdFfmpeg, "input_file", b.hlsTranscoder.inputFile)
 
 	cmd := exec.Command("bash", "-c", cmdFfmpeg)
 	// create a pipe for the output of the script
