@@ -43,10 +43,10 @@ func NewVideoFilterBuilder(width, height int, filterIndex int) *VideoFilterBuild
 	} else {
 		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=\"%d:%s\"", width, "trunc(ow/a/2)*2")
 		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=%d:-1", width)
-		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=w=%d:h=-1:force_original_aspect_ratio=decrease", width)
-		scale := fmt.Sprintf("scale=(iw*sar)*min(%d/(iw*sar)\\,%d/ih):ih*min(%d/(iw*sar)\\,%d/ih):force_original_aspect_ratio=1", width, height, width, height)
-		pad := fmt.Sprintf("pad=%d:%d:(%d-iw*min(%d/iw\\,%d/ih))/2:(%d-ih*min(%d/iw\\,%d/ih))/2", width, height, width, width, height, height, width, height)
-		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf \"%s %s\"", scale, pad)
+		videoFilter.command = videoFilter.command + fmt.Sprintf("-vf scale=w=-2:h=%d:force_original_aspect_ratio=decrease", height)
+		//scale := fmt.Sprintf("scale=(iw*sar)*min(%d/(iw*sar)\\,%d/ih):ih*min(%d/(iw*sar)\\,%d/ih):force_original_aspect_ratio=1", width, height, width, height)
+		//pad := fmt.Sprintf("pad=%d:%d:(%d-iw*min(%d/iw\\,%d/ih))/2:(%d-ih*min(%d/iw\\,%d/ih))/2", width, height, width, width, height, height, width, height)
+		//videoFilter.command = videoFilter.command + fmt.Sprintf("-vf \"%s %s\"", scale, pad)
 	}
 	b := &VideoFilterBuilder{videoFilter: videoFilter}
 	return b
